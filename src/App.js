@@ -82,7 +82,7 @@ const App = () => {
 			if (ethereum) {
 		  		const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
-				const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+				const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
 			
 				console.log("Going to pop wallet now to pay gas...")
 		  		let tx = await contract.register(domain, {value: ethers.utils.parseEther(price)});
@@ -94,7 +94,7 @@ const App = () => {
 					console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
 					
 					// Set the record for the domain
-					tx = contract.setRecord(domain, record);
+					tx = await contract.setRecord(domain, record);
 					await tx.wait();
 	
 					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
@@ -146,10 +146,7 @@ const App = () => {
 				<div className="button-container">
 					<button className='cta-button mint-button' disabled={null} onClick={mintDomain}>
 						Mint
-					</button>  
-					<button className='cta-button mint-button' disabled={null} onClick={null}>
-						Set data
-					</button>  
+					</button>   
 				</div>
 
 			</div>
