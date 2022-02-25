@@ -10,6 +10,11 @@ const App = () => {
 
 	//State Varriables
 	const [currentAccount, setCurrentAccount] = useState('');
+	const [domain, setDomain] = useState('');
+ 	const [record, setRecord] = useState('');
+
+	const tld = '.dgtest';
+	const CONTRACT_ADDRESS = '0x5C1Ca25838091668d73Fd48b8b38d118bcD133Ae';
 
 	// Connect Waller
 	const connectWallet = async () => {
@@ -66,6 +71,41 @@ const App = () => {
 		</div>
   	);
 
+	  // Form to enter domain name and data
+	const renderInputForm = () =>{
+		return (
+			<div className="form-container">
+				<div className="first-row">
+					<input
+						type="text"
+						value={domain}
+						placeholder='domain'
+						onChange={e => setDomain(e.target.value)}
+					/>
+					<p className='tld'> {tld} </p>
+				</div>
+
+				<input
+					type="text"
+					value={record}
+					placeholder='whats ur dope goat power'
+					onChange={e => setRecord(e.target.value)}
+				/>
+
+				<div className="button-container">
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Mint
+					</button>  
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Set data
+					</button>  
+				</div>
+
+			</div>
+		);
+	}
+  
+
 	// useEffects 
 	useEffect(() => {
 		checkIfWalletIsConnected();
@@ -88,6 +128,7 @@ const App = () => {
 
 				{/* Add your render method here */}
 				{!currentAccount && renderNotConnectedContainer()}
+				{currentAccount && renderInputForm()}
 
 				<div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
