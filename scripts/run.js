@@ -1,7 +1,7 @@
 const main = async () => {
     const [owner, randomPerson] = await hre.ethers.getSigners();
     const domainContractFactory = await hre.ethers.getContractFactory('Domains');
-    const domainContract = await domainContractFactory.deploy("dopegoattest");
+    const domainContract = await domainContractFactory.deploy("dgt");
     await domainContract.deployed();
 
     console.log("Contract deployed to:", domainContract.address);
@@ -24,19 +24,19 @@ const main = async () => {
     console.log("Record of domain:", record);
 
     //register
-    txn = await domainContract.connect(randomPerson).register("doom2",{value: hre.ethers.utils.parseEther('0.1')});
+    txn = await domainContract.connect(randomPerson).register("ooph",{value: hre.ethers.utils.parseEther('0.1')});
     await txn.wait();
 
     //get owner
-    domainOwner = await domainContract.connect(randomPerson).getAddress("doom2");
+    domainOwner = await domainContract.connect(randomPerson).getAddress("ooph");
     console.log("Owner of domain:", domainOwner);
 
     //setrecord
-    txn = await domainContract.connect(randomPerson).setRecord("doom2","Here is some more doom");
+    txn = await domainContract.connect(randomPerson).setRecord("ooph","Here is some more doom");
     await txn.wait();
 
     //getrecord
-    record = await domainContract.connect(randomPerson).getRecord("doom2");
+    record = await domainContract.connect(randomPerson).getRecord("ooph");
     console.log("Record of domain:", record);
 
     const balance = await hre.ethers.provider.getBalance(domainContract.address);
