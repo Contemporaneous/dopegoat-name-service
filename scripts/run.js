@@ -24,7 +24,7 @@ const main = async () => {
     console.log("Record of domain:", record);
 
     //register
-    txn = await domainContract.connect(randomPerson).register("ooph",{value: hre.ethers.utils.parseEther('0.1')});
+    txn = await domainContract.connect(randomPerson).register("ooph",{value: hre.ethers.utils.parseEther('0.3')});
     await txn.wait();
 
     //get owner
