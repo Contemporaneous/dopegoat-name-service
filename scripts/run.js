@@ -1,14 +1,14 @@
 const main = async () => {
     const [owner, randomPerson] = await hre.ethers.getSigners();
     const domainContractFactory = await hre.ethers.getContractFactory('Domains');
-    const domainContract = await domainContractFactory.deploy();
+    const domainContract = await domainContractFactory.deploy("dopegoattest");
     await domainContract.deployed();
 
     console.log("Contract deployed to:", domainContract.address);
     console.log("Contract deployed by:", owner.address);
     
     //register
-    let txn = await domainContract.register("doom");
+    let txn = await domainContract.register("doom",{value: hre.ethers.utils.parseEther('0.3')});
     await txn.wait();
 
     //get owner
@@ -24,7 +24,7 @@ const main = async () => {
     console.log("Record of domain:", record);
 
     //register
-    txn = await domainContract.connect(randomPerson).register("doom2");
+    txn = await domainContract.connect(randomPerson).register("doom2",{value: hre.ethers.utils.parseEther('0.1')});
     await txn.wait();
 
     //get owner
@@ -38,6 +38,9 @@ const main = async () => {
     //getrecord
     record = await domainContract.connect(randomPerson).getRecord("doom2");
     console.log("Record of domain:", record);
+
+    const balance = await hre.ethers.provider.getBalance(domainContract.address);
+    console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
 
   };
   
