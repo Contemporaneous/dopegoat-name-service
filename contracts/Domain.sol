@@ -26,6 +26,11 @@ contract Domains is ERC721URIStorage {
     mapping(string => string) public records;
     mapping (uint => string) public names;
 
+    error Unauthorized();
+    error AlreadyRegistered();
+    error InvalidName(string name);
+    error NotEnoughFunds();
+
     constructor(string memory _tld) payable ERC721("Dope Goat Name Service","DGNS") {
         owner = payable(msg.sender);
         tld = _tld;
@@ -49,12 +54,14 @@ contract Domains is ERC721URIStorage {
     // A register function that adds their names to our mapping
     function register(string calldata name) public payable{
         // Check if the name is already registered
-        require(domains[name] == address(0)); 
+        if (domains[name] != address(0)) revert AlreadyRegistered();
+        //Check if the name is valid
+        if (!valid(name)) revert InvalidName(name);
 
         uint _price = price(name);
 
         //Check if the caller has enough funds
-        require(msg.value >= _price, "Not enough Matic paid");
+        if (msg.value < _price) revert NotEnoughFunds();
 
         string memory _name = string(abi.encodePacked(name, ".", tld));
 
@@ -106,7 +113,7 @@ contract Domains is ERC721URIStorage {
 
     function setRecord(string calldata name, string calldata record) public {
         // Check that the owner is the transaction sender
-        require(domains[name] == msg.sender);
+        if (msg.sender != domains[name]) revert Unauthorized();
 
         records[name] = record;
     }
