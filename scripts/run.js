@@ -11,6 +11,16 @@ const main = async () => {
     let txn = await domainContract.register("doom",{value: hre.ethers.utils.parseEther('0.3')});
     await txn.wait();
 
+    let balance = await hre.ethers.provider.getBalance(domainContract.address);
+    console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
+
+    try {
+      txn = await domainContract.connect(randomPerson).withdraw();
+      await txn.wait();
+    } catch(error){
+      console.log("Could not rob contract");
+    }
+
     //get owner
     let domainOwner = await domainContract.getAddress("doom");
     console.log("Owner of domain:", domainOwner);
@@ -22,6 +32,18 @@ const main = async () => {
     //getrecord
     let record = await domainContract.getRecord("doom");
     console.log("Record of domain:", record);
+
+    let ownerBalance = await hre.ethers.provider.getBalance(owner.address);
+    console.log("Balance of owner before withdrawal:", hre.ethers.utils.formatEther(ownerBalance));
+
+    txn = await domainContract.connect(owner).withdraw();
+    await txn.wait();
+
+    const contractBalance = await hre.ethers.provider.getBalance(domainContract.address);
+    ownerBalance = await hre.ethers.provider.getBalance(owner.address);
+
+    console.log("Contract balance after withdrawal:", hre.ethers.utils.formatEther(contractBalance));
+    console.log("Balance of owner after withdrawal:", hre.ethers.utils.formatEther(ownerBalance));
 
     //register
     txn = await domainContract.connect(randomPerson).register("ooph",{value: hre.ethers.utils.parseEther('0.3')});
@@ -39,7 +61,7 @@ const main = async () => {
     record = await domainContract.connect(randomPerson).getRecord("ooph");
     console.log("Record of domain:", record);
 
-    const balance = await hre.ethers.provider.getBalance(domainContract.address);
+    balance = await hre.ethers.provider.getBalance(domainContract.address);
     console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
 
   };
