@@ -162,6 +162,8 @@ const App = () => {
 					setTimeout(() => {
 						fetchMints();
 					}, 2000);
+
+					alert("You're Goat has been minted https://mumbai.polygonscan.com/tx/"+tx.hash)
 					
 					setRecord('');
 					setDomain('');
