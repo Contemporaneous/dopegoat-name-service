@@ -21,6 +21,8 @@ const App = () => {
 	const [domain, setDomain] = useState('');
  	const [record, setRecord] = useState('');
 	const [network, setNetwork] = useState('');
+	const [editing, setEditing] = useState(false);
+	const [mints, setMints] = useState([]);
 
 	const tld = '.dgtest';
 	const CONTRACT_ADDRESS = '0x5C1Ca25838091668d73Fd48b8b38d118bcD133Ae';
@@ -154,6 +156,11 @@ const App = () => {
 					await tx.wait();
 	
 					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+
+					//Fetch Domain after 2 seconds
+					setTimeout(() => {
+						fetchMints();
+					}, 2000);
 					
 					setRecord('');
 					setDomain('');
@@ -166,6 +173,65 @@ const App = () => {
 	  	catch(error){
 			console.log(error);
 	  	}
+	}
+
+	const fetchMints = async () => {
+		try {
+			const { ethereum } = window;
+			if (ethereum) {
+				// You know all this
+				const provider = new ethers.providers.Web3Provider(ethereum);
+				const signer = provider.getSigner();
+				const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
+					
+				// Get all the domain names from our contract
+				const names = await contract.getAllNames();
+					
+				// For each name, get the record and the address
+				const mintRecords = await Promise.all(names.map(async (name) => {
+				const mintRecord = await contract.records(name);
+				const owner = await contract.domains(name);
+				return {
+					id: names.indexOf(name),
+					name: name,
+					record: mintRecord,
+					owner: owner,
+				};
+			}));
+	
+			console.log("MINTS FETCHED ", mintRecords);
+			setMints(mintRecords);
+			}
+		} catch(error){
+			console.log(error);
+		}
+	}
+
+
+	//Update Domain
+	const updateDomain = async () => {
+		if (!record || !domain) { return }
+			setLoading(true);
+			console.log("Updating domain", domain, "with record", record);
+			try {
+				const { ethereum } = window;
+				if (ethereum) {
+					const provider = new ethers.providers.Web3Provider(ethereum);
+					const signer = provider.getSigner();
+					const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
+		
+					let tx = await contract.setRecord(domain, record);
+					await tx.wait();
+					console.log("Record set https://mumbai.polygonscan.com/tx/"+tx.hash);
+		
+					fetchMints();
+					setRecord('');
+					setDomain('');
+				}
+			} catch(error) {
+				console.log(error);
+			}
+			setLoading(false);
 	}
 
 	// Create a function to render if wallet is not connected yet
@@ -208,12 +274,20 @@ const App = () => {
 					placeholder='whats ur dope goat power'
 					onChange={e => setRecord(e.target.value)}
 				/>
-
-				<div className="button-container">
+				{editing ? (
+					<div className="button-container">
+						<button className='cta-button mint-button' disabled={loading} onClick={updateDomain}>
+							Set record
+						</button>  
+						<button className='cta-button mint-button' onClick={() => {setEditing(false)}}>
+							Cancel
+						</button>   
+					</div>
+				) : (
 					<button className='cta-button mint-button' disabled={null} onClick={mintDomain}>
 						Mint
 					</button>   
-				</div>
+				)}
 
 			</div>
 		);
@@ -224,6 +298,12 @@ const App = () => {
 	useEffect(() => {
 		checkIfWalletIsConnected();
 	}, [])
+
+	useEffect(() => {
+		if (network === 'Polygon Mumbai Testnet') {
+			fetchMints();
+		}
+	}, [currentAccount, network]);
 
 
 
