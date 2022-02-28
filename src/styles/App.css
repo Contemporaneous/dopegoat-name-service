@@ -113,6 +113,16 @@ header{
   padding: 0px 2rem;
 }
 
+.network-button {
+  background: -webkit-linear-gradient(left, #246350, #427745);
+  font-size: 18px;
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+  margin: 20px 10px;
+  border-radius: 5px;
+  padding: 0px 2rem;
+}
+
 .mint-button:disabled{
   background: #550072;
   color: rgb(209, 209, 209);

@@ -185,7 +185,7 @@ const App = () => {
 			return (
 				<div className="connect-wallet-container">
 					<p>Please connect to the Polygon Mumbai Testnet</p>
-					<button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
+					<button className='cta-button network-button' onClick={switchNetwork}>Click here to switch</button>
 				</div>
 			);
 		}
