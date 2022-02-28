@@ -22,10 +22,11 @@ const App = () => {
  	const [record, setRecord] = useState('');
 	const [network, setNetwork] = useState('');
 	const [editing, setEditing] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [mints, setMints] = useState([]);
 
 	const tld = '.dgtest';
-	const CONTRACT_ADDRESS = '0x5C1Ca25838091668d73Fd48b8b38d118bcD133Ae';
+	const CONTRACT_ADDRESS = '0xd16A7e5f43b0749FcbE6Abe083Caf1513Ef1eEe9';
 
 	// Connect Waller
 	const connectWallet = async () => {
@@ -284,13 +285,50 @@ const App = () => {
 						</button>   
 					</div>
 				) : (
-					<button className='cta-button mint-button' disabled={null} onClick={mintDomain}>
+					<button className='cta-button mint-button' disabled={loading} onClick={mintDomain}>
 						Mint
 					</button>   
 				)}
 
 			</div>
 		);
+	}
+
+	const renderMints = () => {
+		if (currentAccount && mints.length > 0) {
+			return (
+				<div className="mint-container">
+					<p className="subtitle"> Recently minted domains!</p>
+					<div className="mint-list">
+						{ mints.map((mint, index) => {
+							return (
+								<div className="mint-item" key={index}>
+									<div className='mint-row'>
+										<a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+											<p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+										</a>
+										{/* If mint.owner is currentAccount, add an "edit" button*/}
+										{ mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
+											<button className="edit-button" onClick={() => editRecord(mint.name)}>
+												<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
+											</button>
+											:
+											null
+										}
+									</div>
+						<p> {mint.record} </p>
+					</div>)
+					})}
+				</div>
+			</div>);
+		}
+	};
+	
+	// This will take us into edit mode and show us the edit buttons!
+	const editRecord = (name) => {
+		console.log("Editing record for", name);
+		setEditing(true);
+		setDomain(name);
 	}
   
 
@@ -328,6 +366,7 @@ const App = () => {
 				{/* Add your render method here */}
 				{!currentAccount && renderNotConnectedContainer()}
 				{currentAccount && renderInputForm()}
+				{mints && renderMints()}
 
 				<div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
