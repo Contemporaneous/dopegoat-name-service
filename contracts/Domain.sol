@@ -31,6 +31,13 @@ contract Domains is ERC721URIStorage {
     error InvalidName(string name);
     error NotEnoughFunds();
 
+    struct DomainDetails {
+        address owner;
+        string name;
+        uint height;
+        uint weight;
+    }
+
     constructor(string memory _tld) payable ERC721("Dope Goat Name Service","DGNS") {
         owner = payable(msg.sender);
         tld = _tld;
