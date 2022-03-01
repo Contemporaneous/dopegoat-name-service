@@ -8,7 +8,7 @@ const main = async () => {
     console.log("Contract deployed by:", owner.address);
     
     //register
-    let txn = await domainContract.register("doom",{value: hre.ethers.utils.parseEther('0.3')});
+    let txn = await domainContract.register("Bill",{value: hre.ethers.utils.parseEther('0.3')});
     await txn.wait();
 
     let balance = await hre.ethers.provider.getBalance(domainContract.address);
@@ -22,16 +22,20 @@ const main = async () => {
     }
 
     //get owner
-    let domainOwner = await domainContract.getAddress("doom");
+    let domainOwner = await domainContract.getAddress("Bill");
     console.log("Owner of domain:", domainOwner);
 
     //setrecord
-    txn = await domainContract.setRecord("doom","Here is some doom");
+    txn = await domainContract.setRecord("Bill","Name","Bill");
+    await txn.wait();
+
+    txn = await domainContract.setRecord("Bill","Favourite Food","Meat");
     await txn.wait();
 
     //getrecord
-    let record = await domainContract.getRecord("doom");
-    console.log("Record of domain:", record);
+    let recName = await domainContract.getRecord("Bill","Name");
+    let recFood = await domainContract.getRecord("Bill","Favourite Food");
+    console.log(`Bill's name is ${recName} and his favourite food is ${recFood}`);
 
     let ownerBalance = await hre.ethers.provider.getBalance(owner.address);
     console.log("Balance of owner before withdrawal:", hre.ethers.utils.formatEther(ownerBalance));
@@ -46,20 +50,24 @@ const main = async () => {
     console.log("Balance of owner after withdrawal:", hre.ethers.utils.formatEther(ownerBalance));
 
     //register
-    txn = await domainContract.connect(randomPerson).register("ooph",{value: hre.ethers.utils.parseEther('0.3')});
+    txn = await domainContract.connect(randomPerson).register("Kevin",{value: hre.ethers.utils.parseEther('0.1')});
     await txn.wait();
 
     //get owner
-    domainOwner = await domainContract.connect(randomPerson).getAddress("ooph");
+    domainOwner = await domainContract.connect(randomPerson).getAddress("Kevin");
     console.log("Owner of domain:", domainOwner);
 
     //setrecord
-    txn = await domainContract.connect(randomPerson).setRecord("ooph","Here is some more doom");
+    txn = await domainContract.connect(randomPerson).setRecord("Kevin","Name","Kevin");
+    await txn.wait();
+
+    txn = await domainContract.connect(randomPerson).setRecord("Kevin","Favourite Food","Lettuce");
     await txn.wait();
 
     //getrecord
-    record = await domainContract.connect(randomPerson).getRecord("ooph");
-    console.log("Record of domain:", record);
+    recName = await domainContract.getRecord("Kevin","Name");
+    recFood = await domainContract.getRecord("Kevin","Favourite Food");
+    console.log(`Kevin's name is ${recName} and his favourite food is ${recFood}`);
 
     balance = await hre.ethers.provider.getBalance(domainContract.address);
     console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
