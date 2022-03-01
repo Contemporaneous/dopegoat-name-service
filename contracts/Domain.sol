@@ -23,7 +23,7 @@ contract Domains is ERC721URIStorage {
     string svgPartTwo = '</text></svg>';
 
     mapping(string => address) public domains;
-    mapping(string => string) public records;
+    mapping(string => mapping(string => string)) public records;
     mapping (uint => string) public names;
 
     error Unauthorized();
@@ -118,15 +118,15 @@ contract Domains is ERC721URIStorage {
         return domains[name];
     }
 
-    function setRecord(string calldata name, string calldata record) public {
+    function setRecord(string calldata name, string calldata recordName, string calldata record) public {
         // Check that the owner is the transaction sender
         if (msg.sender != domains[name]) revert Unauthorized();
 
-        records[name] = record;
+        records[name][recordName] = record;
     }
 
-    function getRecord(string calldata name) public view returns(string memory) {
-        return records[name];
+    function getRecord(string calldata name, string calldata recordName) public view returns(string memory) {
+        return records[name][recordName];
     }
 
     modifier onlyOwner() {
