@@ -20,6 +20,8 @@ const App = () => {
 	const [currentAccount, setCurrentAccount] = useState('');
 	const [domain, setDomain] = useState('');
  	const [record, setRecord] = useState('');
+	const [favFood, setFavFood] = useState('');
+	const [favPark, setFavPark] = useState('');
 	const [network, setNetwork] = useState('');
 	const [editing, setEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -153,7 +155,12 @@ const App = () => {
 					console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
 					
 					// Set the record for the domain
-					tx = await contract.setRecord(domain, record);
+					tx = await contract.setFavFood(domain,"Favourite Food", favFood);
+					await tx.wait();
+
+					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+
+					tx = await contract.setFavFood(domain,"Favourite Park", favPark);
 					await tx.wait();
 	
 					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
@@ -192,12 +199,14 @@ const App = () => {
 					
 				// For each name, get the record and the address
 				const mintRecords = await Promise.all(names.map(async (name) => {
-				const favFood = await contract.records(name,"Favourite Food");
+				const myFavFood = await contract.records(name,"Favourite Food");
+				const myFavPark = await contract.records(name,"Favourite Park");
 				const owner = await contract.domains(name);
 				return {
 					id: names.indexOf(name),
 					name: name,
-					favFood: favFood,
+					favFood: myFavFood,
+					favPark: myFavPark,
 					owner: owner,
 				};
 			}));
@@ -223,12 +232,17 @@ const App = () => {
 					const signer = provider.getSigner();
 					const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
 		
-					let tx = await contract.setRecord(domain, "Favourite Food", record);
+					let tx = await contract.setRecord(domain, "Favourite Food", favFood);
+					await tx.wait();
+					console.log("Record set https://mumbai.polygonscan.com/tx/"+tx.hash);
+
+					tx = await contract.setRecord(domain, "Favourite Park", favPark);
 					await tx.wait();
 					console.log("Record set https://mumbai.polygonscan.com/tx/"+tx.hash);
 		
 					fetchMints();
-					setRecord('');
+					setFavFood('');
+					setFavPark('');
 					setDomain('');
 				}
 			} catch(error) {
@@ -270,12 +284,17 @@ const App = () => {
 					/>
 					<p className='tld'> {tld} </p>
 				</div>
-
 				<input
 					type="text"
-					value={record}
+					value={favFood}
 					placeholder='Favourite Food'
-					onChange={e => setRecord(e.target.value)}
+					onChange={e => setFavFood(e.target.value)}
+				/>
+				<input
+					type="text"
+					value={favPark}
+					placeholder='Favourite Park'
+					onChange={f => setFavPark(f.target.value)}
 				/>
 				{editing ? (
 					<div className="button-container">
@@ -319,6 +338,7 @@ const App = () => {
 										}
 									</div>
 						<p>{"Favourite Food: "+mint.favFood} </p>
+						<p>{"Favourite Park: "+mint.favPark} </p>
 					</div>)
 					})}
 				</div>
