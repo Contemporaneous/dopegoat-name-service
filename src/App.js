@@ -19,7 +19,6 @@ const App = () => {
 	//State Varriables
 	const [currentAccount, setCurrentAccount] = useState('');
 	const [domain, setDomain] = useState('');
- 	const [record, setRecord] = useState('');
 	const [favFood, setFavFood] = useState('');
 	const [favPark, setFavPark] = useState('');
 	const [network, setNetwork] = useState('');
@@ -155,12 +154,12 @@ const App = () => {
 					console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
 					
 					// Set the record for the domain
-					tx = await contract.setFavFood(domain,"Favourite Food", favFood);
+					tx = await contract.setRecord(domain,"Favourite Food", favFood);
 					await tx.wait();
 
 					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
 
-					tx = await contract.setFavFood(domain,"Favourite Park", favPark);
+					tx = await contract.setRecord(domain,"Favourite Park", favPark);
 					await tx.wait();
 	
 					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
@@ -172,7 +171,8 @@ const App = () => {
 
 					alert("You're Goat has been minted https://mumbai.polygonscan.com/tx/"+tx.hash)
 					
-					setRecord('');
+					setFavFood('');
+					setFavPark('');
 					setDomain('');
 				}
 				else {
@@ -222,9 +222,9 @@ const App = () => {
 
 	//Update Domain
 	const updateDomain = async () => {
-		if (!record || !domain) { return }
+		if (!favFood || !favPark || !domain) { return }
 			setLoading(true);
-			console.log("Updating domain", domain, "with record", record);
+			console.log("Updating domain", domain, "with records, Favourite Food ", favFood, " Favourite Park", favPark);
 			try {
 				const { ethereum } = window;
 				if (ethereum) {
@@ -351,6 +351,8 @@ const App = () => {
 		console.log("Editing record for", name);
 		setEditing(true);
 		setDomain(name);
+		setFavFood('');
+		setFavPark('');
 	}
   
 
