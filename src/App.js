@@ -26,7 +26,7 @@ const App = () => {
 	const [mints, setMints] = useState([]);
 
 	const tld = '.dgtest';
-	const CONTRACT_ADDRESS = '0xd16A7e5f43b0749FcbE6Abe083Caf1513Ef1eEe9';
+	const CONTRACT_ADDRESS = '0xac2115F455948A0faDF03067C57f1AF27C945FfC';
 
 	// Connect Waller
 	const connectWallet = async () => {
@@ -192,12 +192,12 @@ const App = () => {
 					
 				// For each name, get the record and the address
 				const mintRecords = await Promise.all(names.map(async (name) => {
-				const mintRecord = await contract.records(name);
+				const favFood = await contract.records(name,"Favourite Food");
 				const owner = await contract.domains(name);
 				return {
 					id: names.indexOf(name),
 					name: name,
-					record: mintRecord,
+					favFood: favFood,
 					owner: owner,
 				};
 			}));
@@ -223,7 +223,7 @@ const App = () => {
 					const signer = provider.getSigner();
 					const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
 		
-					let tx = await contract.setRecord(domain, record);
+					let tx = await contract.setRecord(domain, "Favourite Food", record);
 					await tx.wait();
 					console.log("Record set https://mumbai.polygonscan.com/tx/"+tx.hash);
 		
@@ -274,7 +274,7 @@ const App = () => {
 				<input
 					type="text"
 					value={record}
-					placeholder='whats ur dope goat power'
+					placeholder='Favourite Food'
 					onChange={e => setRecord(e.target.value)}
 				/>
 				{editing ? (
@@ -318,7 +318,7 @@ const App = () => {
 											null
 										}
 									</div>
-						<p> {mint.record} </p>
+						<p>{"Favourite Food: "+mint.favFood} </p>
 					</div>)
 					})}
 				</div>
