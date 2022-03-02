@@ -28,7 +28,7 @@ const App = () => {
 	const [mints, setMints] = useState([]);
 
 	const tld = '.dgtest';
-	const CONTRACT_ADDRESS = '0xac2115F455948A0faDF03067C57f1AF27C945FfC';
+	const CONTRACT_ADDRESS = '0x2D854f7C4029658DE4B00b5340b5e48963629baD';
 
 	// Connect Waller
 	const connectWallet = async () => {
@@ -136,7 +136,7 @@ const App = () => {
 		}
 		// Calculate price based on length of domain (change this to match your contract)	
 		// 3 chars = 0.5 MATIC, 4 chars = 0.3 MATIC, 5 or more = 0.1 MATIC
-		const price = domain.length === 3 ? '0.5' : domain.length === 4 ? '0.3' : '0.1';
+		const price = domain.length === 3 ? '0.05' : domain.length === 4 ? '0.03' : '0.01';
 		console.log("Minting domain", domain, "with price", price);
 	  	try {
 			const { ethereum } = window;
